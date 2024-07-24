@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from .forms import *
 
 # Create your views here.
 
@@ -72,3 +73,23 @@ def myimagepage5(request, imagename):
 
 def myform(request):
     return render(request, 'myform.html')
+
+def submitmyform(request):
+    mydictionary ={
+        "var1": request.POST['mytext'],
+        "var2": request.POST['mytextarea'],
+        "method": request.method
+    }
+    return JsonResponse(mydictionary)
+
+def myform2(request):
+    if request.method == "POST":
+        pass
+
+    elif request.method == "GET":
+        form = FeedbackForm() # FeedbackForm(None)
+        mydictionary = {
+            "form": form
+        }
+        return render(request, 'myform2.html', context=mydictionary)
+
