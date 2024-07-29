@@ -4,6 +4,9 @@ from .forms import *
 
 # Create your views here.
 
+def error_404_view(request, exception):
+    return render(request,'404.html')
+
 def myfunctioncall(request):
     return HttpResponse("Hello World!")
 
@@ -82,26 +85,81 @@ def submitmyform(request):
     }
     return JsonResponse(mydictionary)
 
+# def myform2(request):
+#     if request.method == "POST":
+#         form = FeedbackForm(request.POST)
+#         if form.is_valid():
+#             title = request.POST['title']
+#             subject = request.POST['subject']
+#             mydictionary = {
+#                 "form": FeedbackForm
+#             }
+#             if title != title.upper():
+#                 mydictionary['error'] = True
+#                 mydictionary["errormsg"] = "Tittle should be in Capital letters"
+#
+#             else:
+#                 mydictionary["success"] = True
+#                 mydictionary["successing"] = "Form Submitted"
+#                 return render(request, 'myform2.html', context=mydictionary)
+#
+#         #     print(title)
+#         #     print(subject)
+#         #     var = str('Form Submitted ' + str(request.method))
+#         #     return HttpResponse(var)
+#         # else:
+#         #     mydictionary = {
+#         #         "form": form
+#         #     }
+#         #     return render(request, 'myform2.html', context=mydictionary)
+#
+#     elif request.method == "GET":
+#         form = FeedbackForm() # FeedbackForm(None)
+#         mydictionary = {
+#             "form": form
+#         }
+#         return render(request, 'myform2.html', context=mydictionary)
+
+
+
 def myform2(request):
     if request.method == "POST":
         form = FeedbackForm(request.POST)
         if form.is_valid():
             title = request.POST['title']
             subject = request.POST['subject']
-            print(title)
-            print(subject)
-            var = str('Form Submitted ' + str(request.method))
-            return HttpResponse(var)
-        else:
+            email = request.POST['email']
             mydictionary = {
-                "form": form
+                "form" : FeedbackForm()
             }
-            return render(request, 'myform2.html', context=mydictionary)
+            errorflag = False
+            Errors = []
+            if title != title.upper():
+                errorflag = True
+                errormsg = "Title should be in Capital"
+                Errors.append(errormsg)
+            import re
+            regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
+            if not re.search(regex,email):
+                errorflag = True
+                errormsg = "Not a Valid Email address"
+                Errors.append(errormsg)
+            if errorflag != True:
+                mydictionary["success"] = True
+                mydictionary["successmsg"] = "Form Submitted"
+            mydictionary["error"] = errorflag
+            mydictionary["errors"] = Errors
+            print(mydictionary)
+            return render(request,'myform2.html',context=mydictionary)
+
+
+
 
     elif request.method == "GET":
         form = FeedbackForm() # FeedbackForm(None)
         mydictionary = {
-            "form": form
+            "form" : form
         }
-        return render(request, 'myform2.html', context=mydictionary)
+        return render(request,'myform2.html',context=mydictionary)
+
 
